@@ -3,8 +3,35 @@ let score = JSON.parse(localStorage.getItem("score")) || {
   losses: 0,
   ties: 0,
 };
+let isAutoPlaying = false;
+let intervalId; 
+
+//fonction autoplay exo 4
+function toggleAutoPlay() {
+  const button = document.querySelector('.js-auto');
+
+  if (!isAutoPlaying) {
+    button.innerText = 'Stop Auto Play';
+    isAutoPlaying = true;
+
+    intervalId = setInterval(() => {
+      const playerMove = pickComputerMove();
+      playGame(playerMove);
+    }, 1000);
+
+  } else {
+    button.innerText = 'Auto Play';
+    isAutoPlaying = false;
+    clearInterval(intervalId);
+  }
+}
 
 updateScoreElement();
+// ajout du bouton autoplay
+document.querySelector('.js-auto')
+  .addEventListener('click', () => {
+    toggleAutoPlay();
+  });
 
 document.querySelector(".js-rock-button").addEventListener("click", () => {
   playGame("rock");
@@ -103,3 +130,4 @@ function pickComputerMove() {
 
   return computerMove;
 }
+
