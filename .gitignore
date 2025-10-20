@@ -1,0 +1,10 @@
+# Ignorer le dossier des dépendances Node.js
+node_modules/
+
+# Fichiers système macOS
+.DS_Store
+
+# Logs et fichiers temporaires
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
