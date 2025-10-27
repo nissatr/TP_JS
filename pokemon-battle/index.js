@@ -3,17 +3,21 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 
 // Constantes
-const MAX_HP = 300;
-const API_URL = "https://pokeapi.co/api/v2/pokemon/";
+const MAX_HP = 300; //Chaque Pokémon aura 300 points de vie (HP) maximum.
+const API_URL = "https://pokeapi.co/api/v2/pokemon/"; //l’adresse de base pour aller chercher les données d’un Pokémon
 
+
+//Elle prend le nom d’un Pokémon  et va chercher ses données sur l’API.
 async function getPokemon(name) {
   const res = await axios.get(API_URL + name.toLowerCase());
   const data = res.data;
+  //Sélection de quelques attaques au hasard
   const moves = data.moves
     .filter((m) => m.move && m.move.name)
     .sort(() => 0.5 - Math.random())
     .slice(0, 5);
 
+    //Pour chaque attaque, on va chercher ses détails complets 
   const detailedMoves = await Promise.all(
     moves.map(async (m) => {
       try {
@@ -31,30 +35,34 @@ async function getPokemon(name) {
     })
   );
 
+  //Retourne l’objet Pokémon
   return { name: data.name, moves: detailedMoves, hp: MAX_HP };
 }
 
 function attack(attacker, defender, move) {
-  if (move.pp <= 0) {
+  if (move.pp <= 0) {  //Vérifie si l’attaque a encore des PP
     console.log(chalk.yellow(`${attacker.name}'s ${move.name} has no PP left!`));
     return;
   }
 
+  //Vérifie la précision
   move.pp -= 1;
-
   const hitChance = Math.random() * 100;
   if (hitChance > move.accuracy) {
     console.log(chalk.blue(`${attacker.name}'s ${move.name} missed!`));
     return;
   }
 
+  //Applique les dégâts
   const damage = move.power;
+  //On retire les points de vie du Pokémon défenseur
   defender.hp = Math.max(defender.hp - damage, 0);
   console.log(
     chalk.red(`${attacker.name} used ${move.name}! It dealt ${damage} damage.`)
   );
 }
 
+//Pose une question dans le terminal avec une liste d’attaques au choix.
 async function chooseMove(pokemon) {
   const { moveName } = await inquirer.prompt([
     {
@@ -96,9 +104,9 @@ async function main() {
   }
 
   if (player.hp <= 0) {
-    console.log(chalk.red(`\n${player.name} fainted! You lose 😢`));
+    console.log(chalk.red(`\n${player.name} fainted! You lose `));
   } else {
-    console.log(chalk.green(`\n${bot.name} fainted! You win 🎉`));
+    console.log(chalk.green(`\n${bot.name} fainted! You win `));
   }
 }
 
