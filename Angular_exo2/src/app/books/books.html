@@ -1,0 +1,9 @@
+<h2>Books published after 2020</h2>
+
+<ul>
+  @for (book of books; track book.name) {
+    @if (book.year > 2020) {
+      <li>{{ book.name }} - {{ book.year }}</li>
+    }
+  }
+</ul>
